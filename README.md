@@ -8,8 +8,7 @@
 Ready-to-use formulas for `testcontainer` with typed outputs.
 
 Each formula gives you sensible defaults plus a rich record (for example
-`PostgresContainer` with `connection_url`, `host`, `port`) so tests do not
-rebuild connection strings manually.
+`PostgresContainer` with `connection_url`, `host`, `port`) so tests do not rebuild connection strings manually.
 
 ## Install
 
