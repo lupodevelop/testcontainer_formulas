@@ -105,10 +105,10 @@ pub fn with_secret_root_password(
 }
 
 /// Adds an extra wait strategy on top of the default
-/// `log_times("ready for connections", 2)`. The `_, 2` matches the second
-/// emission, which is the final server after the temporary bootstrap
-/// server has finished creating users — earlier, clients race the init
-/// scripts and hit "Access denied".
+/// `log_times("MY-010931", 2)`. `MY-010931` is the mysqld "Server ready"
+/// message id, emitted once by the temporary bootstrap server and again
+/// by the final TCP server — matching the second occurrence guarantees
+/// `MYSQL_USER` exists and the server is reachable on port 3306.
 pub fn with_extra_wait(c: MysqlConfig, s: wait.WaitStrategy) -> MysqlConfig {
   MysqlConfig(..c, extra_wait: Some(s))
 }
@@ -130,11 +130,15 @@ pub fn with_name(c: MysqlConfig, n: String) -> MysqlConfig {
 /// `testcontainer.with_formula/2`.
 pub fn formula(c: MysqlConfig) -> formula.Formula(MysqlContainer) {
   let mysql_port = port.tcp(3306)
-  // The mysql image entrypoint starts a temporary server to run init
-  // (database/user creation), shuts it down, then starts the final server.
-  // Both phases emit "ready for connections", so matching the second
-  // occurrence avoids racing client auth against not-yet-created users.
-  let base_wait = wait.log_times("ready for connections", 2)
+  // The mysql image entrypoint starts a temporary server (socket-only,
+  // port 0) to run init scripts, shuts it down, then starts the final
+  // TCP-listening server. Both X Plugin and mysqld log "ready for
+  // connections", so naive log-matching either fires too early or counts
+  // X Plugin lines. `MY-010931` is the mysqld-specific message id for
+  // "Server ready"; it occurs exactly twice (temp + final), so the
+  // second occurrence is the final TCP-ready phase, after init scripts
+  // have created `MYSQL_USER`.
+  let base_wait = wait.log_times("MY-010931", 2)
   let wait_strategy = case c.extra_wait {
     None -> base_wait
     Some(extra) -> wait.all_of([base_wait, extra])

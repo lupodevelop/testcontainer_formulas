@@ -120,6 +120,12 @@ pub fn mysql_formula_integration_contract_test() {
           formula_contract.assert_non_empty(db.database)
           formula_contract.assert_non_empty(db.username)
 
+          // mysql:8.4 default auth plugin is `caching_sha2_password`. Over
+          // plain TCP (no TLS, not a unix socket) the client must either
+          // already hold the server's RSA public key or fetch it on demand.
+          // `--get-server-public-key` does the latter — without it, the
+          // first connection fails with
+          // "Authentication requires secure connection".
           let ping =
             testcontainer.exec(db.container, [
               "mysqladmin",
@@ -129,6 +135,7 @@ pub fn mysql_formula_integration_contract_test() {
               "-u",
               db.username,
               "-psecret",
+              "--get-server-public-key",
             ])
             |> should.be_ok()
           ping.exit_code |> should.equal(0)
