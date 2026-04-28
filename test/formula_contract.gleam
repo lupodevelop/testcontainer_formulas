@@ -1,6 +1,6 @@
 import envie
-import gleeunit/should
 import gleam/string
+import gleeunit/should
 
 pub fn integration_enabled() -> Bool {
   envie.get_bool("TESTCONTAINER_FORMULAS_INTEGRATION", False)

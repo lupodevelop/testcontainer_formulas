@@ -31,10 +31,7 @@ pub fn postgres_formula_integration_contract_test() {
           formula_contract.assert_non_empty(pg.username)
 
           let ready =
-            testcontainer.exec(
-              pg.container,
-              ["pg_isready", "-U", pg.username],
-            )
+            testcontainer.exec(pg.container, ["pg_isready", "-U", pg.username])
             |> should.be_ok()
           ready.exit_code |> should.equal(0)
           Ok(Nil)
@@ -86,10 +83,12 @@ pub fn redis_formula_with_password_integration_contract_test() {
           )
 
           let ping =
-            testcontainer.exec(
-              cache.container,
-              ["redis-cli", "-a", "secret", "PING"],
-            )
+            testcontainer.exec(cache.container, [
+              "redis-cli",
+              "-a",
+              "secret",
+              "PING",
+            ])
             |> should.be_ok()
           ping.exit_code |> should.equal(0)
           string.contains(ping.stdout, "PONG") |> should.be_true()
@@ -122,10 +121,15 @@ pub fn mysql_formula_integration_contract_test() {
           formula_contract.assert_non_empty(db.username)
 
           let ping =
-            testcontainer.exec(
-              db.container,
-              ["mysqladmin", "ping", "-h", "127.0.0.1", "-u", db.username, "-psecret"],
-            )
+            testcontainer.exec(db.container, [
+              "mysqladmin",
+              "ping",
+              "-h",
+              "127.0.0.1",
+              "-u",
+              db.username,
+              "-psecret",
+            ])
             |> should.be_ok()
           ping.exit_code |> should.equal(0)
           Ok(Nil)
@@ -160,7 +164,11 @@ pub fn rabbitmq_formula_integration_contract_test() {
           )
 
           let ping =
-            testcontainer.exec(mq.container, ["rabbitmq-diagnostics", "-q", "ping"])
+            testcontainer.exec(mq.container, [
+              "rabbitmq-diagnostics",
+              "-q",
+              "ping",
+            ])
             |> should.be_ok()
           ping.exit_code |> should.equal(0)
           Ok(Nil)
@@ -193,21 +201,18 @@ pub fn mongo_formula_integration_contract_test() {
           formula_contract.assert_non_empty(db.username)
 
           let ping =
-            testcontainer.exec(
-              db.container,
-              [
-                "mongosh",
-                "--quiet",
-                "--username",
-                db.username,
-                "--password",
-                "secret",
-                "--authenticationDatabase",
-                "admin",
-                "--eval",
-                "db.runCommand({ ping: 1 }).ok",
-              ],
-            )
+            testcontainer.exec(db.container, [
+              "mongosh",
+              "--quiet",
+              "--username",
+              db.username,
+              "--password",
+              "secret",
+              "--authenticationDatabase",
+              "admin",
+              "--eval",
+              "db.runCommand({ ping: 1 }).ok",
+            ])
             |> should.be_ok()
           ping.exit_code |> should.equal(0)
           string.contains(ping.stdout, "1") |> should.be_true()

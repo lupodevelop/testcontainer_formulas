@@ -93,7 +93,10 @@ pub fn with_vhost(c: RabbitMqConfig, vhost: String) -> RabbitMqConfig {
 
 /// Adds an extra wait strategy on top of the default
 /// `all_of([port(5672), log("Server startup complete")])`.
-pub fn with_extra_wait(c: RabbitMqConfig, s: wait.WaitStrategy) -> RabbitMqConfig {
+pub fn with_extra_wait(
+  c: RabbitMqConfig,
+  s: wait.WaitStrategy,
+) -> RabbitMqConfig {
   RabbitMqConfig(..c, extra_wait: Some(s))
 }
 
@@ -114,8 +117,9 @@ pub fn with_name(c: RabbitMqConfig, n: String) -> RabbitMqConfig {
 /// `testcontainer.with_formula/2`.
 pub fn formula(c: RabbitMqConfig) -> formula.Formula(RabbitMqContainer) {
   let amqp_port = port.tcp(5672)
-  let management_port = port.tcp(15672)
-  let base_wait = wait.all_of([wait.port(5672), wait.log("Server startup complete")])
+  let management_port = port.tcp(15_672)
+  let base_wait =
+    wait.all_of([wait.port(5672), wait.log("Server startup complete")])
   let wait_strategy = case c.extra_wait {
     None -> base_wait
     Some(extra) -> wait.all_of([base_wait, extra])
@@ -142,7 +146,10 @@ pub fn formula(c: RabbitMqConfig) -> formula.Formula(RabbitMqContainer) {
 
   formula.new(final_spec, fn(running) {
     use mapped_amqp <- result.try(container.host_port(running, amqp_port))
-    use mapped_management <- result.try(container.host_port(running, management_port))
+    use mapped_management <- result.try(container.host_port(
+      running,
+      management_port,
+    ))
     let host = container.host(running)
     let pass = cowl.reveal(c.password)
     Ok(RabbitMqContainer(
@@ -157,7 +164,10 @@ pub fn formula(c: RabbitMqConfig) -> formula.Formula(RabbitMqContainer) {
         <> int.to_string(mapped_amqp)
         <> "/"
         <> uri.percent_encode(c.vhost),
-      management_url: "http://" <> host <> ":" <> int.to_string(mapped_management),
+      management_url: "http://"
+        <> host
+        <> ":"
+        <> int.to_string(mapped_management),
       host: host,
       amqp_port: mapped_amqp,
       management_port: mapped_management,

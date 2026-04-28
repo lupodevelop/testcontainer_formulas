@@ -127,11 +127,11 @@ pub fn with_name(c: MongoConfig, n: String) -> MongoConfig {
 /// Builds the `Formula(MongoContainer)` ready to pass to
 /// `testcontainer.with_formula/2`.
 pub fn formula(c: MongoConfig) -> formula.Formula(MongoContainer) {
-  let mongo_port = port.tcp(27017)
+  let mongo_port = port.tcp(27_017)
   // Port-open alone can race the auth bootstrap; the log line confirms
   // mongod is actually accepting client connections.
   let base_wait =
-    wait.all_of([wait.port(27017), wait.log("Waiting for connections")])
+    wait.all_of([wait.port(27_017), wait.log("Waiting for connections")])
   let wait_strategy = case c.extra_wait {
     None -> base_wait
     Some(extra) -> wait.all_of([base_wait, extra])
