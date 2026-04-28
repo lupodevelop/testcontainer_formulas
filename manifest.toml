@@ -8,7 +8,7 @@ packages = [
   { name = "gleam_json", version = "3.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_json", source = "hex", outer_checksum = "44FDAA8847BE8FC48CA7A1C089706BD54BADCC4C45B237A992EDDF9F2CDB2836" },
   { name = "gleam_stdlib", version = "1.0.0", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "960090C2FB391784BB34267B099DC9315CC1B1F6013E7415BC763CEF1905D7D3" },
   { name = "gleeunit", version = "1.10.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "254B697FE72EEAD7BF82E941723918E421317813AC49923EE76A18C788C61E72" },
-  { name = "testcontainer", version = "1.0.0", build_tools = ["gleam"], requirements = ["cowl", "envie", "gleam_erlang", "gleam_json", "gleam_stdlib"], otp_app = "testcontainer", source = "hex", outer_checksum = "A60BD4B5F413326A5C550B00C9D8F9D339418C42449237AA8993952CB0B487B0" },
+  { name = "testcontainer", version = "1.0.1", build_tools = ["gleam"], requirements = ["cowl", "envie", "gleam_erlang", "gleam_json", "gleam_stdlib"], otp_app = "testcontainer", source = "hex", outer_checksum = "0D823B2ABE2C2E465B6CBB7E2F993E363EEC978EAFB915B532C1A21ED0C194D0" },
 ]
 
 [requirements]

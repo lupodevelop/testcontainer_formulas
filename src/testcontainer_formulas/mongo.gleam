@@ -104,9 +104,12 @@ pub fn with_auth_database(c: MongoConfig, db: String) -> MongoConfig {
 }
 
 /// Adds an extra wait strategy on top of the default
-/// `all_of([port(27017), log("Waiting for connections")])`. Both signals
-/// are emitted by the official `mongo` images and stay image-agnostic
-/// (no dependency on `mongosh` being present).
+/// `all_of([port(27017), log_times("Waiting for connections", 2)])`.
+/// The `log_times(_, 2)` matches the second emission of that line, which
+/// is the post-bootstrap restart with `--auth` enabled — earlier, clients
+/// using `MONGO_INITDB_ROOT_USERNAME` race the auth-bootstrap and fail
+/// with "Authentication failed". Stays image-agnostic (no dependency on
+/// `mongosh` being present in the image).
 pub fn with_extra_wait(c: MongoConfig, s: wait.WaitStrategy) -> MongoConfig {
   MongoConfig(..c, extra_wait: Some(s))
 }
@@ -128,10 +131,15 @@ pub fn with_name(c: MongoConfig, n: String) -> MongoConfig {
 /// `testcontainer.with_formula/2`.
 pub fn formula(c: MongoConfig) -> formula.Formula(MongoContainer) {
   let mongo_port = port.tcp(27_017)
-  // Port-open alone can race the auth bootstrap; the log line confirms
-  // mongod is actually accepting client connections.
+  // The mongo image entrypoint emits "Waiting for connections" twice when
+  // root creds are configured: once during the no-auth bootstrap pass, then
+  // again after restart with `--auth` enabled. Matching the second occurrence
+  // avoids racing the auth-restart with "Authentication failed".
   let base_wait =
-    wait.all_of([wait.port(27_017), wait.log("Waiting for connections")])
+    wait.all_of([
+      wait.port(27_017),
+      wait.log_times("Waiting for connections", 2),
+    ])
   let wait_strategy = case c.extra_wait {
     None -> base_wait
     Some(extra) -> wait.all_of([base_wait, extra])
