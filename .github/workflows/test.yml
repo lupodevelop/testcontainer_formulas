@@ -1,11 +1,5 @@
 name: test
 
-# This workflow assumes the core `testcontainer` package is either:
-#   1. Published on Hex (and gleam.toml uses a version range), or
-#   2. Available as a sibling checkout at `../testcontiner` (current
-#      path dep). The "Checkout core sibling" step below covers case 2;
-#      drop it once gleam.toml switches to a Hex range.
-
 on:
   push:
     branches:
@@ -20,11 +14,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: testcontainers_formulas
-      - name: Checkout core sibling
-        uses: actions/checkout@v4
-        with:
-          repository: lupodevelop/testcontiner
-          path: testcontiner
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "28"
@@ -44,11 +33,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: testcontainers_formulas
-      - name: Checkout core sibling
-        uses: actions/checkout@v4
-        with:
-          repository: lupodevelop/testcontiner
-          path: testcontiner
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "28"
