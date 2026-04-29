@@ -3,7 +3,7 @@ version = "1.0.0"
 description = "Ready-to-use, fully customizable Testcontainer formulas for Gleam (postgres, redis, …)."
 licences = ["MIT"]
 repository = { type = "github", user = "lupodevelop", repo = "testcontainer_formulas" }
-gleam = ">= 1.1.0"
+gleam = ">= 1.14.0"
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"
