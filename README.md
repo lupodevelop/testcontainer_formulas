@@ -1,5 +1,7 @@
 # testcontainer_formulas
 
+![testcontainer_formulas](https://raw.githubusercontent.com/lupodevelop/testcontainer_formulas/a339f0a29d6d4191d3da51999150ba5dd1a7c064/assets/img/logo.png)
+
 [![Hex Package](https://img.shields.io/hexpm/v/testcontainer_formulas?color=ffaff3)](https://hex.pm/packages/testcontainer_formulas)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/testcontainer_formulas/)
 [![CI](https://github.com/lupodevelop/testcontainer_formulas/actions/workflows/test.yml/badge.svg)](https://github.com/lupodevelop/testcontainer_formulas/actions/workflows/test.yml)
